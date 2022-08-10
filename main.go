@@ -1,34 +1,21 @@
 package main
 
 import (
-	"crypto/rand"
-	"encoding/hex"
+	"bufio"
 	"flag"
 	"fmt"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
 	shell "github.com/rfyiamcool/go-shell"
-)
-
-const (
-	// app          = "peer"
-	// arg0         = "chaincode"
-	// arg1         = "query"
-	// arg2         = "--tls"
-	// arg3         = "--cafile"
-	// arg4         = "/opt/home/managedblockchain-tls-chain.pem"
-	// arg5         = "--channelID"
-	// arg6         = "mychannel"
-	// arg7         = "--name"
-	// arg8         = "mycc"
-	queryBuilder = "peer chaincode query --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c '{\"Args\":[\"CreateTX\", \"%s\", \"%s\"]}'"
-	bindingLen   = 64
+	"github.com/ttvs-blockchain/local-chain-docker-test/ledger"
 )
 
 func main() {
 	tries := flag.Int("try", 100, "number of tries")
+	mode := flag.Bool("mode", true, "if true then run CreateTX, otherwise run ReadTX")
 	flag.Parse()
 	f, err := os.OpenFile(time.Now().Format("2006-01-02-15-04-05")+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	handleError(err)
@@ -37,13 +24,39 @@ func main() {
 		handleError(err)
 	}(f)
 
+	var idList []string
+	if *mode {
+		f, err := os.Open("id_file/test_2_2_id.txt")
+		handleError(err)
+		defer func(f *os.File) {
+			err := f.Close()
+			handleError(err)
+		}(f)
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			idList = append(idList, scanner.Text())
+		}
+		if err := scanner.Err(); err != nil {
+			handleError(err)
+		}
+		fmt.Println("Read TX test")
+	} else {
+		fmt.Println("Create TX test")
+	}
+
 	var totalTime float64
 	for i := 0; i < *tries; i++ {
 		fmt.Println("No.", i)
 		_, err := f.WriteString(strconv.Itoa(i) + "\n")
 		handleError(err)
-		query, err := composeQuery()
-		handleError(err)
+		var query string
+		if *mode {
+			query, err = ledger.DummyCreatTX()
+			handleError(err)
+		} else {
+			randIdx := rand.Intn(len(idList))
+			query = ledger.ReadTX(idList[randIdx])
+		}
 		cmd := shell.NewCommand(query)
 		fmt.Println(query)
 		_, err = f.WriteString(cmd.Bash + "\n")
@@ -62,19 +75,6 @@ func main() {
 	}
 	avgTime := totalTime / float64(*tries)
 	fmt.Println("Average time: " + fmt.Sprintf("%f", avgTime))
-}
-
-func composeQuery() (string, error) {
-	byteBinding := make([]byte, bindingLen)
-	_, err := rand.Read(byteBinding)
-	if err != nil {
-		return "", err
-	}
-	strBinding := hex.EncodeToString(byteBinding)
-	timestamp := time.Now().UnixNano()
-	strTimestamp := strconv.Itoa(int(timestamp))
-	res := fmt.Sprintf(queryBuilder, strBinding, strTimestamp)
-	return res, nil
 }
 
 func handleError(err error) {
