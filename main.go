@@ -86,7 +86,7 @@ func main() {
 		totalTime += costTimeSeconds
 		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
-		if i%1000 == 0 {
+		if i%1000 == 0 && i != 0 {
 			fmt.Println("Idling...")
 			time.Sleep(time.Second * 2)
 		} else {
