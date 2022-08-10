@@ -1,29 +1,29 @@
 package main
 
 import (
-	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
 	"fmt"
 	"os"
-	"os/exec"
 	"strconv"
 	"time"
+
+	shell "github.com/rfyiamcool/go-shell"
 )
 
 const (
-	app          = "peer"
-	arg0         = "chaincode"
-	arg1         = "query"
-	arg2         = "--tls"
-	arg3         = "--cafile"
-	arg4         = "/opt/home/managedblockchain-tls-chain.pem"
-	arg5         = "--channelID"
-	arg6         = "mychannel"
-	arg7         = "--name"
-	arg8         = "mycc"
-	queryBuilder = "-c \\'{\\\"Args\\\":[\\\"CreateTX\\\", \\\"%s\\\", \\\"%s\\\"]}\\'"
+	// app          = "peer"
+	// arg0         = "chaincode"
+	// arg1         = "query"
+	// arg2         = "--tls"
+	// arg3         = "--cafile"
+	// arg4         = "/opt/home/managedblockchain-tls-chain.pem"
+	// arg5         = "--channelID"
+	// arg6         = "mychannel"
+	// arg7         = "--name"
+	// arg8         = "mycc"
+	queryBuilder = "peer chaincode query --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c '{\"Args\":[\"CreateTX\", \"%s\", \"%s\"]}'"
 	bindingLen   = 64
 )
 
@@ -41,26 +41,17 @@ func main() {
 	for i := 0; i < *tries; i++ {
 		query, err := composeQuery()
 		handleError(err)
-		cmd := exec.Command(app, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, query)
-		fmt.Println(cmd)
-		_, err = f.WriteString(cmd.String() + "\n")
+		cmd := shell.NewCommand(query)
+		fmt.Println(query)
+		_, err = f.WriteString(cmd.Bash + "\n")
 		handleError(err)
 		start := time.Now()
-		var (
-			stdout bytes.Buffer
-			stderr bytes.Buffer
-		)
-		cmd.Stdout = &stdout
-		cmd.Stderr = &stderr
-		err = cmd.Run()
-		if err != nil {
-			fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-			return
+		cmd.Run()
+		status := cmd.Status
+		if status.ExitCode != 0 {
+			panic(status.Error)
 		}
-		handleError(err)
-		fmt.Println(stdout.String())
-		_, err = f.WriteString(stdout.String() + "\n")
-		handleError(err)
+		fmt.Println(status)
 		timeInterval := time.Since(start).Seconds()
 		totalTime += timeInterval
 		timeString := fmt.Sprintf("%f", timeInterval)
