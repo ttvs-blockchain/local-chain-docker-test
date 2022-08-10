@@ -9,23 +9,23 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
-	"strings"
 	"time"
 )
 
 const (
-	app        = "peer"
-	arg0       = "chaincode"
-	arg1       = "query"
-	arg2       = "--tls"
-	arg3       = "--cafile"
-	arg4       = "/opt/home/managedblockchain-tls-chain.pem"
-	arg5       = "--channelID"
-	arg6       = "mychannel"
-	arg7       = "--name"
-	arg8       = "mycc"
-	arg9       = "-c"
-	bindingLen = 64
+	app          = "peer"
+	arg0         = "chaincode"
+	arg1         = "query"
+	arg2         = "--tls"
+	arg3         = "--cafile"
+	arg4         = "/opt/home/managedblockchain-tls-chain.pem"
+	arg5         = "--channelID"
+	arg6         = "mychannel"
+	arg7         = "--name"
+	arg8         = "mycc"
+	arg9         = "-c"
+	queryBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
+	bindingLen   = 64
 )
 
 func main() {
@@ -81,13 +81,14 @@ func composeQuery() (string, error) {
 	strBinding := hex.EncodeToString(byteBinding)
 	timestamp := time.Now().UnixNano()
 	strTimestamp := strconv.Itoa(int(timestamp))
-	var builder strings.Builder
-	builder.WriteString("'{\"Args\":[\"CreateTX\", \"")
-	builder.WriteString(strBinding)
-	builder.WriteString("\", \"")
-	builder.WriteString(strTimestamp)
-	builder.WriteString("\"]}'")
-	return builder.String(), nil
+	// var builder strings.Builder
+	// builder.WriteString("'{\"Args\":[\"CreateTX\", \"")
+	// builder.WriteString(strBinding)
+	// builder.WriteString("\", \"")
+	// builder.WriteString(strTimestamp)
+	// builder.WriteString("\"]}'")
+	res := fmt.Sprintf(queryBuilder, strBinding, strTimestamp)
+	return res, nil
 }
 
 func handleError(err error) {
