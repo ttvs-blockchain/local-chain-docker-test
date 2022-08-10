@@ -23,7 +23,7 @@ const (
 	arg6         = "mychannel"
 	arg7         = "--name"
 	arg8         = "mycc"
-	queryBuilder = "-c '{\"Args\":[\"CreateTX\", %q, %q]}'"
+	queryBuilder = "-c '{\\\"Args\\\":[\\\"CreateTX\\\", \\\"%s\\\", \\\"%s\\\"]}'"
 	bindingLen   = 64
 )
 
