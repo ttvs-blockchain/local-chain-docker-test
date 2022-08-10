@@ -50,9 +50,10 @@ func main() {
 		if status.ExitCode != 0 {
 			panic(status.Error)
 		}
-		_, err = f.WriteString(status.Stdout + "\n")
+		_, err = f.WriteString(status.Output)
 		handleError(err)
 		costTimeSeconds := status.CostTime.Seconds()
+		totalTime += costTimeSeconds
 		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
 	}
