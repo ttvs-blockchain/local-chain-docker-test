@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	queryBuilder          = "peer chaincode query --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c %s"
+	queryBuilder          = "docker exec cli peer chaincode query --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c %s"
 	createQueryArgBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
 	readQueryArg          = "'{\"Args\":[\"ReadTX\", %q]}'"
 	bindingLen            = 64
