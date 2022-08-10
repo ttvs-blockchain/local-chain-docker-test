@@ -33,7 +33,10 @@ func main() {
 		}(f)
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
-			idList = append(idList, scanner.Text())
+			id := scanner.Text()
+			id = id[:len(id)-1]
+			idList = append(idList, id)
+			fmt.Println(id)
 		}
 		if err := scanner.Err(); err != nil {
 			handleError(err)
@@ -83,6 +86,7 @@ func main() {
 		totalTime += costTimeSeconds
 		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
+		time.Sleep(time.Millisecond * 100)
 	}
 	avgTime := totalTime / float64(*tries)
 	fmt.Println("Average time: " + fmt.Sprintf("%f", avgTime))
