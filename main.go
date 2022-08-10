@@ -28,7 +28,7 @@ const (
 )
 
 func main() {
-	tries := flag.Int("try", 100, "number of tries")
+	tries := flag.Int("try", 10, "number of tries")
 	flag.Parse()
 	f, err := os.OpenFile("test_"+time.Now().Local().String()+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	handleError(err)
@@ -45,17 +45,15 @@ func main() {
 		fmt.Println(query)
 		_, err = f.WriteString(cmd.Bash + "\n")
 		handleError(err)
-		start := time.Now()
 		cmd.Run()
 		status := cmd.Status
 		if status.ExitCode != 0 {
 			panic(status.Error)
 		}
-		fmt.Println(status)
-		timeInterval := time.Since(start).Seconds()
-		totalTime += timeInterval
-		timeString := fmt.Sprintf("%f", timeInterval)
-		_, err = f.WriteString(timeString + "\n")
+		_, err = f.WriteString(status.Stdout + "\n")
+		handleError(err)
+		costTimeSeconds := status.CostTime.Seconds()
+		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
 	}
 	avgTime := totalTime / float64(*tries)
@@ -71,12 +69,6 @@ func composeQuery() (string, error) {
 	strBinding := hex.EncodeToString(byteBinding)
 	timestamp := time.Now().UnixNano()
 	strTimestamp := strconv.Itoa(int(timestamp))
-	// var builder strings.Builder
-	// builder.WriteString("'{\"Args\":[\"CreateTX\", \"")
-	// builder.WriteString(strBinding)
-	// builder.WriteString("\", \"")
-	// builder.WriteString(strTimestamp)
-	// builder.WriteString("\"]}'")
 	res := fmt.Sprintf(queryBuilder, strBinding, strTimestamp)
 	return res, nil
 }
