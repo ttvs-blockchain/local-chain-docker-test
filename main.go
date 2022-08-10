@@ -62,9 +62,11 @@ func main() {
 		fmt.Println(query)
 		_, err = f.WriteString(cmd.Bash + "\n")
 		handleError(err)
-		cmd.Run()
+		err = cmd.Run()
+		handleError(err)
 		status := cmd.Status
 		if status.ExitCode != 0 {
+			fmt.Println(status.Output)
 			panic(status.Error)
 		}
 		_, err = f.WriteString(status.Output)

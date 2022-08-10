@@ -9,10 +9,12 @@ import (
 )
 
 const (
-	queryBuilder          = "docker exec cli peer chaincode query --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c %s"
-	createQueryArgBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
-	readQueryArg          = "'{\"Args\":[\"ReadTX\", %q]}'"
-	bindingLen            = 64
+	cliBuilder       = "peer chaincode %s --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID mychannel --name mycc -c %s"
+	cliInvoke        = "invoke"
+	cliQuery         = "query"
+	createArgBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
+	readArgBuilder   = "'{\"Args\":[\"ReadTX\", %q]}'"
+	bindingLen       = 64
 )
 
 func DummyCreatTX() (string, error) {
@@ -24,13 +26,13 @@ func DummyCreatTX() (string, error) {
 	strBinding := hex.EncodeToString(byteBinding)
 	timestamp := time.Now().UnixNano()
 	strTimestamp := strconv.Itoa(int(timestamp))
-	createQueryArg := fmt.Sprintf(createQueryArgBuilder, strBinding, strTimestamp)
-	res := fmt.Sprintf(queryBuilder, createQueryArg)
+	createQueryArg := fmt.Sprintf(createArgBuilder, strBinding, strTimestamp)
+	res := fmt.Sprintf(cliBuilder, cliInvoke, createQueryArg)
 	return res, nil
 }
 
 func ReadTX(id string) string {
-	readQueryArg := fmt.Sprintf(readQueryArg, id)
-	res := fmt.Sprintf(queryBuilder, readQueryArg)
+	readQueryArg := fmt.Sprintf(readArgBuilder, id)
+	res := fmt.Sprintf(cliBuilder, cliQuery, readQueryArg)
 	return res
 }
