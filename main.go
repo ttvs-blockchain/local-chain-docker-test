@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/rand"
 	"encoding/hex"
 	"flag"
@@ -46,10 +47,20 @@ func main() {
 		_, err = f.WriteString(cmd.String() + "\n")
 		handleError(err)
 		start := time.Now()
-		stdout, err := cmd.Output()
+		var (
+			stdout bytes.Buffer
+			stderr bytes.Buffer
+		)
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+		err = cmd.Run()
+		if err != nil {
+			fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+			return
+		}
 		handleError(err)
-		fmt.Println(string(stdout))
-		_, err = f.WriteString(string(stdout) + "\n")
+		fmt.Println(stdout.String())
+		_, err = f.WriteString(stdout.String() + "\n")
 		handleError(err)
 		timeInterval := time.Since(start).Seconds()
 		totalTime += timeInterval
