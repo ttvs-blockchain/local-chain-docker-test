@@ -34,9 +34,7 @@ func main() {
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
 			id := scanner.Text()
-			id = id[:len(id)-1]
 			idList = append(idList, id)
-			fmt.Println(id)
 		}
 		if err := scanner.Err(); err != nil {
 			handleError(err)
