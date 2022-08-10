@@ -15,7 +15,7 @@ import (
 
 func main() {
 	tries := flag.Int("try", 100, "number of tries")
-	mode := flag.Bool("mode", true, "if true then run CreateTX, otherwise run ReadTX")
+	read := flag.Bool("read", false, "if true then run ReadTX, otherwise run CreateTX")
 	flag.Parse()
 	f, err := os.OpenFile(time.Now().Format("2006-01-02-15-04-05")+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	handleError(err)
@@ -25,7 +25,7 @@ func main() {
 	}(f)
 
 	var idList []string
-	if *mode {
+	if *read {
 		f, err := os.Open("id_file/test_2_2_id.txt")
 		handleError(err)
 		defer func(f *os.File) {
@@ -50,12 +50,12 @@ func main() {
 		_, err := f.WriteString(strconv.Itoa(i) + "\n")
 		handleError(err)
 		var query string
-		if *mode {
-			query, err = ledger.DummyCreatTX()
-			handleError(err)
-		} else {
+		if *read {
 			randIdx := rand.Intn(len(idList))
 			query = ledger.ReadTX(idList[randIdx])
+		} else {
+			query, err = ledger.DummyCreatTX()
+			handleError(err)
 		}
 		cmd := shell.NewCommand(query)
 		fmt.Println(query)

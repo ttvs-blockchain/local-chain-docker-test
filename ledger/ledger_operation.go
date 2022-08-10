@@ -30,7 +30,7 @@ func DummyCreatTX() (string, error) {
 }
 
 func ReadTX(id string) string {
-	findQueryArg := fmt.Sprintf(readQueryArg, id)
-	res := fmt.Sprintf(queryBuilder, findQueryArg)
+	readQueryArg := fmt.Sprintf(readQueryArg, id)
+	res := fmt.Sprintf(queryBuilder, readQueryArg)
 	return res
 }
