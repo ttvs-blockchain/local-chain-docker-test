@@ -23,8 +23,7 @@ const (
 	arg6         = "mychannel"
 	arg7         = "--name"
 	arg8         = "mycc"
-	arg9         = "-c"
-	queryBuilder = "\"{\"Args\":[\"CreateTX\", %q, %q]}\""
+	queryBuilder = "-c '{\"Args\":[\"CreateTX\", %q, %q]}'"
 	bindingLen   = 64
 )
 
@@ -42,7 +41,7 @@ func main() {
 	for i := 0; i < *tries; i++ {
 		query, err := composeQuery()
 		handleError(err)
-		cmd := exec.Command(app, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, query)
+		cmd := exec.Command(app, arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, query)
 		fmt.Println(cmd)
 		_, err = f.WriteString(cmd.String() + "\n")
 		handleError(err)
