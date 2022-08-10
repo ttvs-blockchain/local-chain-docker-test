@@ -68,6 +68,8 @@ func main() {
 		_, err = f.WriteString(timeString + "\n")
 		handleError(err)
 	}
+	avgTime := totalTime / float64(*tries)
+	fmt.Println("Average time: " + fmt.Sprintf("%f", avgTime))
 }
 
 func composeQuery() (string, error) {
@@ -80,11 +82,11 @@ func composeQuery() (string, error) {
 	timestamp := time.Now().UnixNano()
 	strTimestamp := strconv.Itoa(int(timestamp))
 	var builder strings.Builder
-	builder.WriteString(`'{"Args":["CreateTX", "`)
+	builder.WriteString("'{\"Args\":[\"CreateTX\", \"")
 	builder.WriteString(strBinding)
-	builder.WriteString(`", "`)
+	builder.WriteString("\", \"")
 	builder.WriteString(strTimestamp)
-	builder.WriteString(`"]}'`)
+	builder.WriteString("\"]}'")
 	return builder.String(), nil
 }
 
