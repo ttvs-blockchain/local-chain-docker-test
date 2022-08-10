@@ -86,7 +86,12 @@ func main() {
 		totalTime += costTimeSeconds
 		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
-		time.Sleep(time.Millisecond * 300)
+		if i%1000 == 0 {
+			fmt.Println("Idling...")
+			time.Sleep(time.Second * 2)
+		} else {
+			time.Sleep(time.Millisecond * 50)
+		}
 	}
 	avgTime := totalTime / float64(*tries)
 	fmt.Println("Average time: " + fmt.Sprintf("%f", avgTime))
