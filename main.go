@@ -28,7 +28,7 @@ const (
 )
 
 func main() {
-	tries := flag.Int("try", 10, "number of tries")
+	tries := flag.Int("try", 100, "number of tries")
 	flag.Parse()
 	f, err := os.OpenFile("test_"+time.Now().Local().String()+".log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	handleError(err)
@@ -39,6 +39,9 @@ func main() {
 
 	var totalTime float64
 	for i := 0; i < *tries; i++ {
+		fmt.Println("No.", i)
+		_, err := f.WriteString(strconv.Itoa(i) + "\n")
+		handleError(err)
 		query, err := composeQuery()
 		handleError(err)
 		cmd := shell.NewCommand(query)
