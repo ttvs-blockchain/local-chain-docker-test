@@ -13,21 +13,19 @@ import (
 	"github.com/ttvs-blockchain/local-chain-docker-test/ledger"
 )
 
+const (
+	createPrefix = "c"
+	readPrefix   = "r"
+)
+
 func main() {
 	tries := flag.Int("try", 100, "number of tries")
 	read := flag.Bool("read", false, "if true then run ReadTX, otherwise run CreateTX")
 	flag.Parse()
-	f, err := os.OpenFile(time.Now().Format("2006-01-02-15-04-05")+".log",
-		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	handleError(err)
-	defer func(f *os.File) {
-		err := f.Close()
-		handleError(err)
-	}(f)
-
+	var prefix string
 	var idList []string
 	if *read {
-		f, err := os.Open("id_file/test_2_2_id.txt")
+		f, err := os.Open("id_file/test_2_id.txt")
 		handleError(err)
 		defer func(f *os.File) {
 			err := f.Close()
@@ -40,10 +38,20 @@ func main() {
 		if err := scanner.Err(); err != nil {
 			handleError(err)
 		}
+		prefix = readPrefix
 		fmt.Println("Read TX test")
 	} else {
+		prefix = createPrefix
 		fmt.Println("Create TX test")
 	}
+
+	f, err := os.OpenFile(prefix+time.Now().Format("2006-01-02-15-04-05")+".log",
+		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	handleError(err)
+	defer func(f *os.File) {
+		err := f.Close()
+		handleError(err)
+	}(f)
 
 	var totalTime float64
 	for i := 0; i < *tries; i++ {
