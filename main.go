@@ -46,8 +46,10 @@ func main() {
 		fmt.Println("Create TX test")
 	}
 
-	f, err := os.OpenFile(prefix+time.Now().Format("2006-01-02-15-04-05")+".log",
-		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	f, err := os.OpenFile(
+		prefix+time.Now().Format("2006-01-02-15-04-05")+".log",
+		os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666,
+	)
 	handleError(err)
 	defer func(f *os.File) {
 		err := f.Close()
@@ -84,7 +86,7 @@ func main() {
 		totalTime += costTimeSeconds
 		_, err = f.WriteString(fmt.Sprintf("%f\n", costTimeSeconds))
 		handleError(err)
-		time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 300)
 	}
 	avgTime := totalTime / float64(*tries)
 	fmt.Println("Average time: " + fmt.Sprintf("%f", avgTime))
