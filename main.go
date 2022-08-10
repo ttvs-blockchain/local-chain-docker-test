@@ -88,7 +88,7 @@ func main() {
 		handleError(err)
 		if i%1000 == 0 && i != 0 {
 			fmt.Println("Idling...")
-			time.Sleep(time.Second * 2)
+			time.Sleep(time.Second * 10)
 		} else {
 			time.Sleep(time.Millisecond * 50)
 		}
