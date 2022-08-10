@@ -24,7 +24,7 @@ const (
 	arg7         = "--name"
 	arg8         = "mycc"
 	arg9         = "-c"
-	queryBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
+	queryBuilder = "\"{\"Args\":[\"CreateTX\", %q, %q]}\""
 	bindingLen   = 64
 )
 
