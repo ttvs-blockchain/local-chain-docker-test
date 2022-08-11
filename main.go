@@ -25,7 +25,7 @@ func main() {
 	var prefix string
 	var idList []string
 	if *read {
-		f, err := os.Open("id_file/test_3_id.txt")
+		f, err := os.Open("id_file/test_4_id.txt")
 		handleError(err)
 		defer func(f *os.File) {
 			err := f.Close()
