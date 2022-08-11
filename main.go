@@ -25,7 +25,7 @@ func main() {
 	var prefix string
 	var idList []string
 	if *read {
-		f, err := os.Open("id_file/test_2_id.txt")
+		f, err := os.Open("id_file/test_3_id.txt")
 		handleError(err)
 		defer func(f *os.File) {
 			err := f.Close()
@@ -90,7 +90,7 @@ func main() {
 			fmt.Println("Idling...")
 			time.Sleep(time.Second * 10)
 		} else {
-			time.Sleep(time.Millisecond * 50)
+			time.Sleep(time.Millisecond * 100)
 		}
 	}
 	avgTime := totalTime / float64(*tries)
