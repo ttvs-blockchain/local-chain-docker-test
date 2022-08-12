@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	cliBuilder       = "peer chaincode %s --tls --cafile /opt/home/managedblockchain-tls-chain.pem --channelID ourchannel --name myjointcc -c %s"
+	cliBuilder       = "peer chaincode %s --channelID mychannel --name mycc -c %s"
 	cliInvoke        = "invoke"
 	cliQuery         = "query"
 	createArgBuilder = "'{\"Args\":[\"CreateTX\", %q, %q]}'"
